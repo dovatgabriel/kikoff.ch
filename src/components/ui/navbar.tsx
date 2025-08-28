@@ -23,6 +23,7 @@ import {
 import type { FC } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useShop } from '@/providers/shop-provider';
 
 interface NavbarProps {
   transparent?: boolean;
@@ -152,6 +153,8 @@ const LinkItem: FC<{ title: string; to: string }> = ({ title, to }) => (
 );
 
 const Navbar: FC<NavbarProps> = ({ transparent = true }) => {
+  const { cart } = useShop();
+
   return (
     <div
       className={cn(
@@ -239,7 +242,7 @@ const Navbar: FC<NavbarProps> = ({ transparent = true }) => {
             <Link to="/cart" aria-label="Panier">
               <ShoppingCart size={30} />
               <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
-                3
+                {cart.length}
               </span>
             </Link>
           </Button>

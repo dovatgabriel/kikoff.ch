@@ -8,18 +8,30 @@ interface ShopProviderProps {
 
 interface ShopContextProps {
   trending: Item[];
+  cart: Item[];
+  addToCart: (item: Item) => void;
 }
 
 const ShopContext = createContext<ShopContextProps | undefined>(undefined);
 
 export const ShopProvider: FC<ShopProviderProps> = ({ children }) => {
   const [trending, setTrending] = useState<Item[]>([]);
+  const [cart, setCart] = useState<Item[]>([]);
 
   useEffect(() => {
     setTrending(trendingItems);
   }, []);
 
-  return <ShopContext.Provider value={{ trending }}>{children}</ShopContext.Provider>;
+  const addToCart = (item: Item): void => {
+    const updatedCart = [...cart];
+    updatedCart.push(item);
+
+    setCart(updatedCart);
+  };
+
+  return (
+    <ShopContext.Provider value={{ trending, cart, addToCart }}>{children}</ShopContext.Provider>
+  );
 };
 
 export const useShop = (): ShopContextProps => {
