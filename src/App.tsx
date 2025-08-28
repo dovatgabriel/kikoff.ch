@@ -14,6 +14,10 @@ export const App: FC<AppProps> = () => {
   const { scrollY } = useScroll();
 
   useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [pathname]);
+
+  useEffect(() => {
     const unsubscribe = scrollY.on('change', (latest) => {
       setNavbarTransparent(latest < 200);
     });

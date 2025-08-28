@@ -22,9 +22,19 @@ export const ShopProvider: FC<ShopProviderProps> = ({ children }) => {
     setTrending(trendingItems);
   }, []);
 
+  useEffect(() => {
+    const savedCart = window.localStorage.getItem('kikoff-cart');
+
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
+  }, []);
+
   const addToCart = (item: Item): void => {
     const updatedCart = [...cart];
     updatedCart.push(item);
+
+    window.localStorage.setItem('kikoff-cart', JSON.stringify(updatedCart));
 
     setCart(updatedCart);
   };
