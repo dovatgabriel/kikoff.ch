@@ -10,6 +10,7 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import logo from '@/images/logo.png';
+import { cn } from '@/lib/utils';
 import {
   ChevronRight,
   Dumbbell,
@@ -21,9 +22,10 @@ import {
 } from 'lucide-react';
 import type { FC } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 interface NavbarProps {
-  visible?: boolean;
+  transparent?: boolean;
 }
 
 const categories = [
@@ -149,21 +151,28 @@ const LinkItem: FC<{ title: string; to: string }> = ({ title, to }) => (
   </li>
 );
 
-const BrandBadge: FC = () => (
-  <div className="hidden md:flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">
-    <Flame className="h-3.5 w-3.5" />
-    <span>Livraison 24h</span>
-  </div>
-);
-
-const Navbar: FC<NavbarProps> = ({ visible = true }) => {
-  if (!visible) return null;
-
+const Navbar: FC<NavbarProps> = ({ transparent = true }) => {
   return (
-    <div className="sticky top-0 z-50 w-full shadow bg-card">
+    <div
+      className={cn(
+        'fixed top-0 z-50 w-full py-5',
+        transparent ? 'bg-transparent text-white' : 'bg-card shadow text-foreground',
+      )}
+    >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         <Link to="/" className="flex items-center gap-3">
-          <img src={logo} alt="logo" className="h-8 w-auto" />
+          <motion.img
+            src={logo}
+            alt="logo"
+            className="w-auto"
+            animate={{
+              height: transparent ? 48 : 32,
+            }}
+            transition={{
+              duration: 0.15,
+              ease: 'easeInOut',
+            }}
+          />
         </Link>
         <NavigationMenu>
           <NavigationMenuList>
@@ -226,10 +235,9 @@ const Navbar: FC<NavbarProps> = ({ visible = true }) => {
           </NavigationMenuList>
         </NavigationMenu>
         <div className="flex items-center gap-2">
-          <BrandBadge />
           <Button asChild variant="ghost" size="icon" className="relative">
             <Link to="/cart" aria-label="Panier">
-              <ShoppingCart className="h-5 w-5" />
+              <ShoppingCart size={30} />
               <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
                 3
               </span>
