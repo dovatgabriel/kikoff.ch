@@ -32,6 +32,7 @@ export default defineConfig([
       'prettier/prettier': 'error',
       'react/react-in-jsx-scope': 'off',
       'react/jsx-no-target-blank': 'off',
+      'no-unescaped-entities': 'off',
     },
   },
 ]);
