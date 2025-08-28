@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useShop } from '@/providers/shop-provider';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useMemo, type FC } from 'react';
+import icon from '@/images/icon.png';
 
 type CartProps = object;
 
@@ -11,6 +12,22 @@ export const Cart: FC<CartProps> = () => {
   const { cart } = useShop();
 
   const handleBack = () => window.history.back();
+
+  if (!cart.length) {
+    return (
+      <div className="h-[80dvh] max-w-screen flex items-center justify-center flex-col">
+        <img src={icon} alt="icon" className="h-30 w-auto" />
+        <h1 className="text-3xl md:text-6xl font-bold mt-10">Votre panier est vide</h1>
+        <h2 className="text-xl text-muted-foreground mt-2">
+          Et malheureusement, il n'est pas possible de rien commander.
+        </h2>
+        <Button className="mt-5 text-lg" size="lg" onClick={handleBack}>
+          <ArrowLeft />
+          Continuer mes achats
+        </Button>
+      </div>
+    );
+  }
 
   const cartTotal = useMemo(() => {
     return cart
