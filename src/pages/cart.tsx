@@ -19,7 +19,7 @@ export const Cart: FC<CartProps> = () => {
         <img src={icon} alt="icon" className="h-30 w-auto" />
         <h1 className="text-3xl md:text-6xl font-bold mt-10">Votre panier est vide</h1>
         <h2 className="text-xl text-muted-foreground mt-2">
-          Et malheureusement, il n'est pas possible de rien commander.
+          Et malheureusement, il n&apos;est pas possible de rien commander.
         </h2>
         <Button className="mt-5 text-lg" size="lg" onClick={handleBack}>
           <ArrowLeft />
