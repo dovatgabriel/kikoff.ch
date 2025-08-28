@@ -10,6 +10,7 @@ interface ShopContextProps {
   trending: Item[];
   cart: Item[];
   addToCart: (item: Item) => void;
+  removeFromCart: (item: Item) => void;
 }
 
 const ShopContext = createContext<ShopContextProps | undefined>(undefined);
@@ -39,8 +40,21 @@ export const ShopProvider: FC<ShopProviderProps> = ({ children }) => {
     setCart(updatedCart);
   };
 
+  const removeFromCart = (item: Item): void => {
+    const updatedCart = [...cart];
+    const itemIndex = updatedCart.findIndex((i) => i.id === item.id);
+
+    updatedCart.splice(itemIndex, 1);
+
+    window.localStorage.setItem('kikoff-cart', JSON.stringify(updatedCart));
+
+    setCart(updatedCart);
+  };
+
   return (
-    <ShopContext.Provider value={{ trending, cart, addToCart }}>{children}</ShopContext.Provider>
+    <ShopContext.Provider value={{ trending, cart, addToCart, removeFromCart }}>
+      {children}
+    </ShopContext.Provider>
   );
 };
 

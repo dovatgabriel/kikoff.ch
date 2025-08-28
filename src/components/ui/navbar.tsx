@@ -11,19 +11,11 @@ import {
 } from '@/components/ui/navigation-menu';
 import logo from '@/images/logo.png';
 import { cn } from '@/lib/utils';
-import {
-  ChevronRight,
-  Dumbbell,
-  Flame,
-  Footprints,
-  Percent,
-  Shirt,
-  ShoppingCart,
-} from 'lucide-react';
+import { useShop } from '@/providers/shop-provider';
+import { motion } from 'framer-motion';
+import { ChevronRight, Dumbbell, Footprints, Percent, Shirt, ShoppingCart } from 'lucide-react';
 import type { FC } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { useShop } from '@/providers/shop-provider';
 
 interface NavbarProps {
   transparent?: boolean;

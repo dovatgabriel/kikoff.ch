@@ -1,7 +1,8 @@
 import logo from '@/images/logo.png';
-import { Copyright } from 'lucide-react';
+import { useTheme } from '@/providers/theme-provider';
+import { Copyright, Moon, Sun } from 'lucide-react';
 import type { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Button } from './button';
 
 type FooterProps = object;
 
@@ -52,8 +53,11 @@ const bottomLinks = [
 ];
 
 const Footer: FC<FooterProps> = () => {
-  const currentYear = new Date().getFullYear();
+  const { setTheme, theme } = useTheme();
 
+  const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
+
+  const currentYear = new Date().getFullYear();
   const handleBackHome = () => (window.location.href = window.location.origin);
 
   return (
@@ -69,6 +73,19 @@ const Footer: FC<FooterProps> = () => {
             />
           </div>
           <p className="mt-3 text-lg text-muted-foreground">Votre boutique de sport en ligne</p>
+          <Button onClick={toggleTheme} variant="ghost" className="mt-5">
+            {theme === 'dark' ? (
+              <>
+                Passer en mode clair
+                <Sun />
+              </>
+            ) : (
+              <>
+                Passer en mode sombre
+                <Moon />
+              </>
+            )}
+          </Button>
         </div>
         {menuItems.map((section, sectionIdx) => (
           <div key={sectionIdx}>
