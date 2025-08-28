@@ -15,7 +15,7 @@ export const App: FC<AppProps> = () => {
 
   useEffect(() => {
     const unsubscribe = scrollY.on('change', (latest) => {
-      setNavbarTransparent(latest < 300);
+      setNavbarTransparent(latest < 200);
     });
 
     return unsubscribe;
