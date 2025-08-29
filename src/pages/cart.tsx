@@ -15,6 +15,8 @@ interface PaymentLinkResponse {
   };
 }
 
+const SHIPPING_PRICE = 12;
+
 export const Cart: FC<CartProps> = () => {
   const [paymentLink, setPaymentLink] = useState<string>();
   const { cart } = useShop();
@@ -33,7 +35,7 @@ export const Cart: FC<CartProps> = () => {
     })();
   }, [cart]);
 
-  const handleBack = () => window.history.back();
+  const handleBack = () => (window.location.href = window.location.origin);
   const handleGoPayment = () => (window.location.href = paymentLink ?? window.location.origin);
 
   const cartTotal = useMemo(() => {
@@ -42,11 +44,12 @@ export const Cart: FC<CartProps> = () => {
       .toFixed(2);
   }, [cart]);
 
-  const vat = useMemo(() => {
-    return (parseFloat(cartTotal) * 0.081).toFixed(2);
-  }, [cartTotal]);
+  const vat = 0;
 
-  const total = useMemo(() => (Number(cartTotal) + Number(vat)).toFixed(2), [cartTotal, vat]);
+  const total = useMemo(
+    () => (Number(cartTotal) + Number(vat) + SHIPPING_PRICE).toFixed(2),
+    [cartTotal, vat],
+  );
 
   if (!cart.length) {
     return (
@@ -86,8 +89,16 @@ export const Cart: FC<CartProps> = () => {
               <span className="text-lg font-normal text-muted-foreground">CHF {cartTotal}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-lg font-normal text-muted-foreground">TVA (8.1%)</span>
-              <span className="text-lg font-normal text-muted-foreground">CHF {vat}</span>
+              <span className="text-lg font-normal text-muted-foreground">Frais de livraison</span>
+              <span className="text-lg font-normal text-muted-foreground">
+                CHF {SHIPPING_PRICE.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-normal text-muted-foreground">TVA</span>
+              <span className="text-lg font-normal text-muted-foreground">
+                CHF {vat.toFixed(2)}
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-2xl font-medium">Total</span>

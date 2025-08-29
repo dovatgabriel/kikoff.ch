@@ -11,6 +11,7 @@ interface ShopContextProps {
   cart: Item[];
   addToCart: (item: Item) => void;
   removeFromCart: (item: Item) => void;
+  clearCart: () => void;
 }
 
 interface HttpCallResponse {
@@ -62,8 +63,13 @@ export const ShopProvider: FC<ShopProviderProps> = ({ children }) => {
     setCart(updatedCart);
   };
 
+  const clearCart = (): void => {
+    window.localStorage.removeItem('kikoff-cart');
+    setCart([]);
+  };
+
   return (
-    <ShopContext.Provider value={{ trending, cart, addToCart, removeFromCart }}>
+    <ShopContext.Provider value={{ trending, cart, addToCart, removeFromCart, clearCart }}>
       {children}
     </ShopContext.Provider>
   );

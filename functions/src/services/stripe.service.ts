@@ -22,6 +22,14 @@ export class StripeService {
     const session = await this.stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: lineItems,
+      shipping_options: [
+        {
+          shipping_rate: 'shr_1S1KgsRkjMj2XaggtceFXltX',
+        },
+      ],
+      automatic_tax: {
+        enabled: true,
+      },
       success_url: `${origin}/payment-success`,
       cancel_url: `${origin}/cart`,
     });

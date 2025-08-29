@@ -6,6 +6,7 @@ import { Navbar } from './components/ui/navbar';
 import { Landing } from './pages/landing';
 import { NotFound } from './pages/not-found';
 import { Cart } from './pages/cart';
+import { PaymentSuccess } from './pages/payment-success';
 
 type AppProps = object;
 
@@ -32,6 +33,7 @@ export const App: FC<AppProps> = () => {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
