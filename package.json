@@ -1,5 +1,10 @@
 {
   "name": "kikoff.ch",
+  "author": {
+    "email": "gabriel@optifit.app",
+    "name": "Gabriel Dovat",
+    "url": "https://www.linkedin.com/in/gabriel-dovat-7a7830231/"
+  },
   "private": true,
   "version": "0.0.0",
   "type": "module",
