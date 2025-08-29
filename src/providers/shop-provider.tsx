@@ -1,5 +1,5 @@
-import { trendingItems } from '@/constants/trending';
 import type { Item } from '@/types/item';
+import { getTrendingProducts } from '@/utils/functions';
 import { createContext, useContext, useEffect, useState, type FC, type ReactNode } from 'react';
 
 interface ShopProviderProps {
@@ -13,6 +13,12 @@ interface ShopContextProps {
   removeFromCart: (item: Item) => void;
 }
 
+interface HttpCallResponse {
+  data: {
+    items: Item[];
+  };
+}
+
 const ShopContext = createContext<ShopContextProps | undefined>(undefined);
 
 export const ShopProvider: FC<ShopProviderProps> = ({ children }) => {
@@ -20,7 +26,12 @@ export const ShopProvider: FC<ShopProviderProps> = ({ children }) => {
   const [cart, setCart] = useState<Item[]>([]);
 
   useEffect(() => {
-    setTrending(trendingItems);
+    (async () => {
+      const result = (await getTrendingProducts()) as HttpCallResponse;
+      const trending = result.data.items;
+
+      setTrending(trending);
+    })();
   }, []);
 
   useEffect(() => {
