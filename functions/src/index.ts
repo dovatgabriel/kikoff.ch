@@ -11,3 +11,13 @@ export const getTrendingProducts = onRequest({ cors: true }, async (request, res
 
   response.json({ data: { items: products } });
 });
+
+export const getPaymentLink = onRequest({ cors: true }, async (request, response) => {
+  logger.info('getPaymentLink', request.method);
+
+  const { products, origin } = request.body.data;
+
+  const link = await stripeService.createCheckoutSession(products, origin);
+
+  response.json({ data: { link } });
+});

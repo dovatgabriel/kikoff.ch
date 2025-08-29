@@ -3,15 +3,50 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useShop } from '@/providers/shop-provider';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { useMemo, type FC } from 'react';
+import { useEffect, useMemo, useState, type FC } from 'react';
 import icon from '@/images/icon.png';
+import { getPaymentLink } from '@/utils/functions';
 
 type CartProps = object;
 
+interface PaymentLinkResponse {
+  data: {
+    link: string;
+  };
+}
+
 export const Cart: FC<CartProps> = () => {
+  const [paymentLink, setPaymentLink] = useState<string>();
   const { cart } = useShop();
 
+  useEffect(() => {
+    (async () => {
+      if (cart.length) {
+        const products = cart.map((item) => item.id);
+        const origin = window.location.origin;
+
+        const result = (await getPaymentLink({ products, origin })) as PaymentLinkResponse;
+        const link = result.data?.link;
+
+        setPaymentLink(link);
+      }
+    })();
+  }, [cart]);
+
   const handleBack = () => window.history.back();
+  const handleGoPayment = () => (window.location.href = paymentLink ?? window.location.origin);
+
+  const cartTotal = useMemo(() => {
+    return cart
+      .reduce((sum, item) => sum + parseFloat(item.price.replace(/[^\d.-]/g, '')), 0)
+      .toFixed(2);
+  }, [cart]);
+
+  const vat = useMemo(() => {
+    return (parseFloat(cartTotal) * 0.081).toFixed(2);
+  }, [cartTotal]);
+
+  const total = useMemo(() => (Number(cartTotal) + Number(vat)).toFixed(2), [cartTotal, vat]);
 
   if (!cart.length) {
     return (
@@ -28,18 +63,6 @@ export const Cart: FC<CartProps> = () => {
       </div>
     );
   }
-
-  const cartTotal = useMemo(() => {
-    return cart
-      .reduce((sum, item) => sum + parseFloat(item.price.replace(/[^\d.-]/g, '')), 0)
-      .toFixed(2);
-  }, [cart]);
-
-  const vat = useMemo(() => {
-    return (parseFloat(cartTotal) * 0.081).toFixed(2);
-  }, [cartTotal]);
-
-  const total = useMemo(() => (Number(cartTotal) + Number(vat)).toFixed(2), [cartTotal, vat]);
 
   return (
     <div className="min-h-[60dvh] pt-[20dvh] px-50">
@@ -76,7 +99,13 @@ export const Cart: FC<CartProps> = () => {
               <ArrowLeft />
               Continuer mes achats
             </Button>
-            <Button variant="default" size="lg" className="text-lg px-0 mt-5" onClick={handleBack}>
+            <Button
+              variant="default"
+              size="lg"
+              className="text-lg px-0 mt-5"
+              onClick={handleGoPayment}
+              disabled={!paymentLink}
+            >
               Finaliser ma commande
               <ArrowRight />
             </Button>

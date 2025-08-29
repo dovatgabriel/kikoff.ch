@@ -7,12 +7,34 @@ dotenv.config();
 export class StripeService {
   private stripe: Stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '');
 
-  getTrendingProducts = async (): Promise<Item[]> => {
-    const result = await this.stripe.products.search({
-      query: "active:'true'",
+  createCheckoutSession = async (products: string[], origin: string): Promise<string> => {
+    const lineItems: { price: string; quantity: number }[] = [];
+
+    for (const product of products) {
+      const price = await this.getPriceId(product);
+
+      lineItems.push({
+        price,
+        quantity: 1,
+      });
+    }
+
+    const session = await this.stripe.checkout.sessions.create({
+      mode: 'payment',
+      line_items: lineItems,
+      success_url: `${origin}/payment-success`,
+      cancel_url: `${origin}/cart`,
     });
 
-    const trendingProducts = result.data.filter((product) => product.metadata.trending === 'true');
+    return session.url ?? '';
+  };
+
+  getTrendingProducts = async (): Promise<Item[]> => {
+    const result = await this.stripe.products.search({
+      query: "active:'true' AND metadata['trending']:'true'",
+    });
+
+    const trendingProducts = result.data;
     const items: Item[] = [];
 
     for (const product of trendingProducts) {
@@ -28,15 +50,20 @@ export class StripeService {
     title: product.name,
     picture: product.images[0],
     category: product.metadata.category as Category,
-    price: await this.getPrice(product.id),
+    price: await this.getFormattedPrice(product.id),
   });
 
-  private getPrice = async (productId: string): Promise<string> => {
+  private getFormattedPrice = async (productId: string): Promise<string> => {
     const prices = await this.stripe.prices.list({ product: productId });
     const cents = prices.data[0].unit_amount ?? 0;
 
     const amount = (cents / 100).toFixed(2);
 
     return `CHF ${amount}.-`;
+  };
+
+  private getPriceId = async (productId: string): Promise<string> => {
+    const prices = await this.stripe.prices.list({ product: productId });
+    return prices.data[0].id;
   };
 }
