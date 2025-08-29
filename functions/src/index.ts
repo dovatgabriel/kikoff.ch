@@ -1,7 +1,13 @@
-import { onRequest } from 'firebase-functions/v2/https';
 import * as logger from 'firebase-functions/logger';
+import { onRequest } from 'firebase-functions/v2/https';
+import { StripeService } from './services/stripe.service';
 
-export const getTrendingProducts = onRequest({ cors: true }, (request, response) => {
+const stripeService = new StripeService();
+
+export const getTrendingProducts = onRequest({ cors: true }, async (request, response) => {
   logger.info('getTrendingProducts', request.method);
-  response.json({ data: { items: [] } });
+
+  const products = await stripeService.getTrendingProducts();
+
+  response.json({ data: { items: products } });
 });
