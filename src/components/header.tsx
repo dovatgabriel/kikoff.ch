@@ -1,4 +1,5 @@
 import { Search, Heart, ShoppingBag, Menu } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import logo from '@/assets/logo.svg';
 
 export const Header = () => {
@@ -8,19 +9,21 @@ export const Header = () => {
         <div className="flex items-center justify-between">
           {/* Navigation gauche */}
           <nav className="flex items-center gap-8">
-            <a href="#" className="hover:opacity-70">
-              Home
-            </a>
-            <a href="#" className="hover:opacity-70">
+            <Link to="/" className="hover:opacity-70">
+              Accueil
+            </Link>
+            <Link to="/" className="hover:opacity-70">
               Collections
-            </a>
-            <a href="#" className="hover:opacity-70">
-              New
-            </a>
+            </Link>
+            <Link to="/" className="hover:opacity-70">
+              Nouveautés
+            </Link>
           </nav>
 
           {/* Logo central */}
-          <img className="absolute left-1/2 -translate-x-1/2 transform" src={logo} alt="Kikoff" />
+          <Link to="/" className="absolute left-1/2 -translate-x-1/2 transform">
+            <img src={logo} alt="Kikoff" />
+          </Link>
 
           {/* Icônes droite */}
           <div className="flex items-center gap-4">
