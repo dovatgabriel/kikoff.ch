@@ -18,10 +18,7 @@ export const Header = () => {
               Accueil
             </Link>
             <Link to="/products" className="hover:opacity-70">
-              Collections
-            </Link>
-            <Link to="/" className="hover:opacity-70">
-              Nouveautés
+              Produits
             </Link>
           </nav>
 
@@ -78,14 +75,7 @@ export const Header = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="py-3 hover:opacity-70"
               >
-                Collections
-              </Link>
-              <Link
-                to="/"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="py-3 hover:opacity-70"
-              >
-                Nouveautés
+                Produits
               </Link>
               <div className="mt-2 flex items-center gap-4 border-t border-gray-200 pt-4">
                 <button className="hover:opacity-70">
