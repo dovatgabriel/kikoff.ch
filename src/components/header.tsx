@@ -12,13 +12,10 @@ export const Header = () => {
             <Link to="/" className="hover:opacity-70">
               Accueil
             </Link>
-            <Link to="/" className="hover:opacity-70">
-              Collections
+            <Link to="/products" className="hover:opacity-70">
+              Produits
             </Link>
-            <Link to="/" className="hover:opacity-70">
-              Nouveautés
-            </Link>
-          </nav>
+                     </nav>
 
           {/* Logo central */}
           <Link to="/" className="absolute left-1/2 -translate-x-1/2 transform">

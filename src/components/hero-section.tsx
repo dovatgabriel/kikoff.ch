@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { MoveRight } from 'lucide-react';
 
 interface HeroSectionProps {
@@ -18,10 +19,13 @@ export const HeroSection = ({ image1, image2, image3 }: HeroSectionProps) => {
 
           <span className="text-muted-foreground mt-3 text-lg font-medium">Hiver 2025</span>
 
-          <button className="mt-6 flex items-center gap-3 rounded-xl bg-gray-800 px-6 py-3 text-white transition hover:bg-gray-900">
+          <Link
+            to="/products"
+            className="mt-6 flex items-center gap-3 rounded-xl bg-gray-800 px-6 py-3 text-white transition hover:bg-gray-900"
+          >
             Au magasin
             <MoveRight size={28} strokeWidth={1} />
-          </button>
+          </Link>
         </div>
 
         {/* Right */}
