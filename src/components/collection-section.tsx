@@ -1,18 +1,10 @@
-import { Link } from 'react-router-dom';
-import { ImageFallback } from '@/components/figma/image-fallback';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
-
-interface Product {
-  id: number;
-  name: string;
-  price: string;
-  image: string;
-  category: 'all' | 'men' | 'women' | 'kids';
-}
+import { ProductCard } from '@/components/products/product-card';
+import { NavigationButtons } from '@/components/common/navigation-buttons';
+import type { ProductWithCategory } from '@/types/product';
 
 interface CollectionsSectionProps {
-  products: Product[];
+  products: ProductWithCategory[];
 }
 
 const FILTERS = [
@@ -29,17 +21,17 @@ export const CollectionsSection = ({ products }: CollectionsSectionProps) => {
     activeFilter === 'all' ? products : products.filter((p) => p.category === activeFilter);
 
   return (
-    <section className="bg-gray-50 py-12">
+    <section className="bg-gray-50 py-8 sm:py-12">
       <div className="mx-auto max-w-7xl px-4">
-        <div className="mb-8">
-          <h3 className="mb-6 text-4xl font-bold">COLLECTIONS</h3>
+        <div className="mb-6 sm:mb-8">
+          <h3 className="mb-4 text-2xl font-bold sm:mb-6 sm:text-3xl md:text-4xl">COLLECTIONS</h3>
 
-          <div className="mb-8 flex gap-4">
+          <div className="mb-6 flex flex-wrap gap-2 sm:mb-8 sm:gap-4">
             {FILTERS.map((filter) => (
               <button
                 key={filter.value}
                 onClick={() => setActiveFilter(filter.value)}
-                className={`rounded-full px-4 py-2 transition-colors ${
+                className={`rounded-full px-3 py-1.5 text-xs transition-colors sm:px-4 sm:py-2 sm:text-sm ${
                   activeFilter === filter.value ? 'bg-black text-white' : 'bg-white hover:bg-gray-100'
                 }`}
               >
@@ -49,36 +41,20 @@ export const CollectionsSection = ({ products }: CollectionsSectionProps) => {
           </div>
         </div>
 
-        {/* Grille de produits */}
-        <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-3 md:gap-8">
           {filteredProducts.slice(0, 3).map((product) => (
-            <Link
+            <ProductCard
               key={product.id}
-              to={`/product/${product.id}`}
-              className="group cursor-pointer"
-            >
-              <div className="mb-4 aspect-3/4 overflow-hidden rounded-lg bg-white">
-                <ImageFallback
-                  src={product.image}
-                  alt={product.name}
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-              <h4 className="mb-1">{product.name}</h4>
-              <p>{product.price}</p>
-            </Link>
+              id={product.id}
+              name={product.name}
+              price={product.price}
+              image={product.image}
+              aspectRatio="portrait"
+            />
           ))}
         </div>
 
-        {/* Navigation */}
-        <div className="flex justify-center gap-2">
-          <button className="rounded-md border p-2 hover:bg-white">
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button className="rounded-md border p-2 hover:bg-white">
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        </div>
+        <NavigationButtons className="justify-center" />
       </div>
     </section>
   );
