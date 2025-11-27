@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Heart, ShoppingBag, Menu, X } from 'lucide-react';
+import { Heart, ShoppingBag, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logo from '@/assets/logo.svg';
 import { useCart } from '@/contexts/cart-context';
@@ -45,9 +45,6 @@ export const Header = () => {
           </Link>
 
           <div className="flex items-center gap-4">
-            <button className="hidden hover:opacity-70 md:block">
-              <Search className="h-5 w-5" />
-            </button>
             <Link to="/favorites" className="hidden relative hover:opacity-70 md:block">
               <Heart className="h-5 w-5" />
               {favoritesCount > 0 && (
@@ -86,9 +83,6 @@ export const Header = () => {
                 Produits
               </Link>
               <div className="mt-2 flex items-center gap-4 border-t border-gray-200 pt-4">
-                <button className="hover:opacity-70">
-                  <Search className="h-5 w-5" />
-                </button>
                 <Link
                   to="/favorites"
                   onClick={() => setIsMobileMenuOpen(false)}
