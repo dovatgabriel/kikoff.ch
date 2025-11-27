@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { ImageFallback } from '@/components/figma/image-fallback';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -33,7 +34,11 @@ export const WeeklyProducts = ({ products }: WeeklyProductsProps) => {
 
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           {products.map((product) => (
-            <div key={product.id} className="group cursor-pointer">
+            <Link
+              key={product.id}
+              to={`/product/${product.id}`}
+              className="group cursor-pointer"
+            >
               <div className="mb-3 aspect-square overflow-hidden rounded-lg bg-gray-100">
                 <ImageFallback
                   src={product.image}
@@ -43,7 +48,7 @@ export const WeeklyProducts = ({ products }: WeeklyProductsProps) => {
               </div>
               <h4 className="mb-1 text-sm">{product.name}</h4>
               <p className="text-sm">{product.price}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

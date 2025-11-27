@@ -10,11 +10,9 @@ export const ApproachSection = ({ images }: ApproachSectionProps) => {
       <div className="mx-auto max-w-7xl px-4">
         {/* Titre et description */}
         <div className="mb-12 text-center">
-          <h3 className="mb-4 text-4xl font-bold">OUR APPROACH TO FASHION DESIGN</h3>
+          <h3 className="mb-4 text-4xl font-bold">NOTRE APPROCHE POUR LA DESIGN</h3>
           <p className="mx-auto max-w-3xl text-gray-600">
-            At the heart of our ethos is a commitment to sustainable fashion that doesn't compromise
-            on style. We believe in creating timeless pieces that transcend seasonal trends, crafted
-            with care and designed to last.
+            Nous sommes une marque de vêtements qui se concentre sur la qualité et la durabilité. Nous utilisons des matériaux de haute qualité et des techniques de fabrication innovantes pour créer des vêtements qui sont à la fois confortables et durables.
           </p>
         </div>
 

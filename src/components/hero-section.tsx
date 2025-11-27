@@ -16,10 +16,10 @@ export const HeroSection = ({ image1, image2, image3 }: HeroSectionProps) => {
             Nouvelle collection
           </h1>
 
-          <span className="text-muted-foreground mt-3 text-lg font-medium">Winter 2025</span>
+          <span className="text-muted-foreground mt-3 text-lg font-medium">Hiver 2025</span>
 
           <button className="mt-6 flex items-center gap-3 rounded-xl bg-gray-800 px-6 py-3 text-white transition hover:bg-gray-900">
-            Go to shop
+            Au magasin
             <MoveRight size={28} strokeWidth={1} />
           </button>
         </div>
