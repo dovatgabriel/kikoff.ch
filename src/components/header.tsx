@@ -3,10 +3,13 @@ import { Search, Heart, ShoppingBag, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logo from '@/assets/logo.svg';
 import { useCart } from '@/contexts/cart-context';
+import { useFavorites } from '@/contexts/favorites-context';
 
 export const Header = () => {
   const { getItemCount } = useCart();
+  const { favorites } = useFavorites();
   const itemCount = getItemCount();
+  const favoritesCount = favorites.length;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -45,9 +48,14 @@ export const Header = () => {
             <button className="hidden hover:opacity-70 md:block">
               <Search className="h-5 w-5" />
             </button>
-            <button className="hidden relative hover:opacity-70 md:block">
+            <Link to="/favorites" className="hidden relative hover:opacity-70 md:block">
               <Heart className="h-5 w-5" />
-            </button>
+              {favoritesCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-black text-xs text-white">
+                  {favoritesCount}
+                </span>
+              )}
+            </Link>
             <Link to="/checkout" className="relative hover:opacity-70">
               <ShoppingBag className="h-5 w-5" />
               {itemCount > 0 && (
@@ -81,9 +89,18 @@ export const Header = () => {
                 <button className="hover:opacity-70">
                   <Search className="h-5 w-5" />
                 </button>
-                <button className="relative hover:opacity-70">
+                <Link
+                  to="/favorites"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="relative hover:opacity-70"
+                >
                   <Heart className="h-5 w-5" />
-                </button>
+                  {favoritesCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-black text-xs text-white">
+                      {favoritesCount}
+                    </span>
+                  )}
+                </Link>
               </div>
             </nav>
           </div>
