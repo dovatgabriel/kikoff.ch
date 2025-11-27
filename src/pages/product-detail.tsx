@@ -8,14 +8,15 @@ import { SizeSelector } from '@/components/product/size-selector';
 import { AddToCartButton } from '@/components/product/add-to-cart-button';
 import { products } from '@/data/products';
 import { useCart } from '@/contexts/cart-context';
+import { useFavorites } from '@/contexts/favorites-context';
 
 export const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const [selectedColor, setSelectedColor] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [showAddedMessage, setShowAddedMessage] = useState(false);
 
   const product = products.find((p) => p.id === Number(id));
@@ -84,8 +85,15 @@ export const ProductDetail = () => {
             <div className="flex flex-col border border-gray-300 rounded-lg p-4 md:p-6">
               <ProductHeader
                 name={product.name}
-                isWishlisted={isWishlisted}
-                onWishlistToggle={setIsWishlisted}
+                isWishlisted={isFavorite(product.id)}
+                onWishlistToggle={() =>
+                  toggleFavorite({
+                    productId: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.images[0],
+                  })
+                }
               />
 
               {/* Price */}
