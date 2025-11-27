@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import { Header } from '@/components/header';
 import { SizeFilter } from '@/components/filters/size-filter';
 import { AvailabilityFilter } from '@/components/filters/availability-filter';
@@ -29,6 +29,7 @@ export const Products = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'men' | 'women' | 'kids' | null>(null);
   const [selectedQuickCategory, setSelectedQuickCategory] = useState<string | null>(null);
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
   const filteredProducts = useMemo(() => {
     let filtered = products;
@@ -64,7 +65,7 @@ export const Products = () => {
     }
 
     return filtered;
-  }, [selectedSizes, inStock, outOfStock, searchQuery, selectedCategory, selectedQuickCategory]);
+  }, [selectedSizes, inStock, outOfStock, searchQuery, selectedCategory]);
 
   const inStockCount = products.length; // Mock count
   const outOfStockCount = 0; // Mock count
@@ -78,22 +79,31 @@ export const Products = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <div className="pt-24">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <div className="mb-6">
-            <nav className="mb-4 text-sm text-gray-600">
+      <div className="pt-16 md:pt-32">
+        <div className="mx-auto max-w-7xl px-4 py-4 md:py-8">
+          <div className="mb-4 md:mb-6">
+            <nav className="mb-2 text-xs text-gray-600 md:mb-4 md:text-sm">
               <Link to="/" className="hover:text-black">
                 Accueil
               </Link>
               <span className="mx-2">/</span>
               <span className="text-black">Produits</span>
             </nav>
-            <h1 className="text-4xl font-bold uppercase">Produits</h1>
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl font-bold uppercase md:text-4xl">Produits</h1>
+              <button
+                onClick={() => setIsMobileFiltersOpen(!isMobileFiltersOpen)}
+                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium lg:hidden"
+              >
+                <Filter className="h-4 w-4" />
+                Filtres
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-4 lg:gap-8">
             {/* Sidebar Filters */}
-            <aside className="lg:col-span-1">
+            <aside className={`lg:col-span-1 ${isMobileFiltersOpen ? 'block' : 'hidden lg:block'}`}>
               <div className="rounded-lg bg-white p-6">
                 <h2 className="mb-6 text-lg font-semibold">Filtres</h2>
 
@@ -215,7 +225,7 @@ export const Products = () => {
               </div>
 
               {/* Quick Category Links */}
-              <div className="mb-6 flex flex-wrap gap-2">
+              <div className="mb-4 flex flex-wrap gap-2 md:mb-6">
                 {QUICK_CATEGORIES.map((category) => (
                   <button
                     key={category}

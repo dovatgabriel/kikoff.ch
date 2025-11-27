@@ -1,54 +1,32 @@
-import { Link } from 'react-router-dom';
-import { ImageFallback } from '@/components/figma/image-fallback';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-
-interface Product {
-  id: number;
-  name: string;
-  price: string;
-  image: string;
-}
+import { ProductCard } from '@/components/products/product-card';
+import { NavigationButtons } from '@/components/common/navigation-buttons';
+import type { BaseProduct } from '@/types/product';
 
 interface WeeklyProductsProps {
-  products: Product[];
+  products: BaseProduct[];
 }
 
 export const WeeklyProducts = ({ products }: WeeklyProductsProps) => {
   return (
-    <section className="py-12">
+    <section className="py-8 sm:py-12">
       <div className="mx-auto max-w-7xl px-4">
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-end gap-3">
-            <h3 className="mb-2 text-4xl font-bold">CETTE SEMAINE</h3>
-            <span className="text-sm font-medium text-indigo-700">(04)</span>
+        <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-end gap-2 sm:gap-3">
+            <h3 className="mb-2 text-2xl font-bold sm:text-3xl md:text-4xl">CETTE SEMAINE</h3>
+            <span className="text-xs font-medium text-indigo-700 sm:text-sm">(04)</span>
           </div>
-          <div className="flex gap-2">
-            <button className="rounded-md border p-2 hover:bg-gray-100">
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button className="rounded-md border p-2 hover:bg-gray-100">
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </div>
+          <NavigationButtons />
         </div>
 
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-4">
           {products.map((product) => (
-            <Link
+            <ProductCard
               key={product.id}
-              to={`/product/${product.id}`}
-              className="group cursor-pointer"
-            >
-              <div className="mb-3 aspect-square overflow-hidden rounded-lg bg-gray-100">
-                <ImageFallback
-                  src={product.image}
-                  alt={product.name}
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-              <h4 className="mb-1 text-sm">{product.name}</h4>
-              <p className="text-sm">{product.price}</p>
-            </Link>
+              id={product.id}
+              name={product.name}
+              price={product.price}
+              image={product.image}
+            />
           ))}
         </div>
       </div>

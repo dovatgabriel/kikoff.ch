@@ -10,7 +10,7 @@ export const ProductImageGallery = ({ images, productName }: ProductImageGallery
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-col gap-4 md:flex-row">
       {/* Main image */}
       <div className="flex-1 aspect-square overflow-hidden rounded-lg bg-gray-100">
         <ImageFallback
@@ -21,12 +21,12 @@ export const ProductImageGallery = ({ images, productName }: ProductImageGallery
       </div>
 
       {/* Thumbnail images */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-row gap-2 md:flex-col">
         {images.map((image, index) => (
           <button
             key={index}
             onClick={() => setSelectedImageIndex(index)}
-            className={`aspect-square w-20 overflow-hidden rounded-lg border-2 transition-all ${
+            className={`aspect-square w-16 overflow-hidden rounded-lg border-2 transition-all md:w-20 ${
               selectedImageIndex === index
                 ? 'border-black'
                 : 'border-transparent hover:border-gray-300'

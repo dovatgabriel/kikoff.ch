@@ -35,7 +35,7 @@ export const Home = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <div className="pt-24">
+      <div className="pt-16">
         <HeroSection
           image1="https://images.unsplash.com/photo-1588011025378-15f4778d2558?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwYmxhY2slMjBqYWNrZXR8ZW58MXx8fHwxNzYzNTY3MTIxfDA&ixlib=rb-4.1.0&q=80&w=1080"
           image2="https://images.unsplash.com/photo-1542702942-161ceb2e3d91?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwc25lYWtlcnMlMjBncmVlbnxlbnwxfHx8fDE3NjM1NjcxMjF8MA&ixlib=rb-4.1.0&q=80&w=1080"
