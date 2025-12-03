@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useMemo } from 'react';
+import { createContext, useContext, useState, useMemo, useEffect } from 'react';
 import type { ReactNode } from 'react';
 
 export interface CartItem {
@@ -23,19 +23,41 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+const STORAGE_KEY = 'cart';
+
 const findItemIndex = (
   items: CartItem[],
   productId: number,
   size: string,
-  colorValue: string
+  colorValue: string,
 ): number => {
   return items.findIndex(
-    (i) => i.productId === productId && i.size === size && i.color.value === colorValue
+    (i) => i.productId === productId && i.size === size && i.color.value === colorValue,
   );
 };
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const stored = window.localStorage.getItem(STORAGE_KEY);
+      if (!stored) return [];
+      const parsed = JSON.parse(stored);
+      if (!Array.isArray(parsed)) return [];
+      return parsed as CartItem[];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    } catch {
+      // ignore
+    }
+  }, [items]);
 
   const addToCart = (item: Omit<CartItem, 'quantity'>) => {
     setItems((prev) => {
@@ -54,8 +76,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const removeFromCart = (productId: number, size: string, colorValue: string) => {
     setItems((prev) =>
       prev.filter(
-        (i) => !(i.productId === productId && i.size === size && i.color.value === colorValue)
-      )
+        (i) => !(i.productId === productId && i.size === size && i.color.value === colorValue),
+      ),
     );
   };
 
@@ -63,7 +85,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     productId: number,
     size: string,
     colorValue: string,
-    quantity: number
+    quantity: number,
   ) => {
     if (quantity <= 0) {
       removeFromCart(productId, size, colorValue);
@@ -86,13 +108,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const total = useMemo(
     () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    [items]
+    [items],
   );
 
-  const itemCount = useMemo(
-    () => items.reduce((count, item) => count + item.quantity, 0),
-    [items]
-  );
+  const itemCount = useMemo(() => items.reduce((count, item) => count + item.quantity, 0), [items]);
 
   const value = useMemo(
     () => ({
@@ -104,7 +123,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       getTotal: () => total,
       getItemCount: () => itemCount,
     }),
-    [items, total, itemCount]
+    [items, total, itemCount],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
@@ -117,4 +136,3 @@ export const useCart = () => {
   }
   return context;
 };
-

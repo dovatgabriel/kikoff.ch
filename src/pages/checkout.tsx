@@ -4,9 +4,25 @@ import { Header } from '@/components/header';
 import { ImageFallback } from '@/components/figma/image-fallback';
 import { QuantityControl } from '@/components/common/quantity-control';
 import { useCart } from '@/contexts/cart-context';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '@/firebase.config';
+import type { CheckoutItem } from '@/types/product';
+
+const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
 
 export const Checkout = () => {
   const { items, removeFromCart, updateQuantity, getTotal } = useCart();
+
+  const handleCheckout = async () => {
+    const checkoutItems: CheckoutItem[] = items.map((item) => ({
+      productId: item.productId as unknown as string,
+      quantity: item.quantity,
+    }));
+
+    const result = await createCheckoutSession({ items: checkoutItems });
+
+    window.location.href = (result.data as { url: string }).url;
+  };
 
   if (items.length === 0) {
     return (
@@ -53,7 +69,7 @@ export const Checkout = () => {
                       </Link>
 
                       {/* Controls on right */}
-                      <div className="flex flex-col items-center gap-6 flex-shrink-0">
+                      <div className="flex flex-col items-center gap-6">
                         {/* Size and Color together */}
                         <div className="flex flex-col items-center gap-2">
                           <div className="flex h-8 w-8 items-center justify-center rounded border border-gray-300 text-xs font-medium md:h-10 md:w-10 md:text-sm">
@@ -64,7 +80,7 @@ export const Checkout = () => {
                             style={{ backgroundColor: item.color.value }}
                           />
                         </div>
-                        
+
                         {/* Quantity */}
                         <QuantityControl
                           quantity={item.quantity}
@@ -73,7 +89,7 @@ export const Checkout = () => {
                               item.productId,
                               item.size,
                               item.color.value,
-                              item.quantity - 1
+                              item.quantity - 1,
                             )
                           }
                           onIncrease={() =>
@@ -81,11 +97,11 @@ export const Checkout = () => {
                               item.productId,
                               item.size,
                               item.color.value,
-                              item.quantity + 1
+                              item.quantity + 1,
                             )
                           }
                         />
-                        
+
                         {/* Delete button */}
                         <button
                           onClick={() =>
@@ -101,9 +117,13 @@ export const Checkout = () => {
                     {/* Product name and price at bottom */}
                     <div className="flex items-center justify-between border-t border-gray-100 pt-3">
                       <Link to={`/product/${item.productId}`}>
-                        <h3 className="text-sm font-semibold hover:underline md:text-base">{item.name}</h3>
+                        <h3 className="text-sm font-semibold hover:underline md:text-base">
+                          {item.name}
+                        </h3>
                       </Link>
-                      <span className="text-sm font-semibold md:text-base">€ {item.price * item.quantity}</span>
+                      <span className="text-sm font-semibold md:text-base">
+                        € {item.price * item.quantity}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -131,7 +151,10 @@ export const Checkout = () => {
                   <span className="text-lg font-semibold">€ {getTotal().toFixed(2)}</span>
                 </div>
 
-                <button className="mt-6 w-full rounded-md bg-black px-6 py-3 font-semibold text-white hover:bg-gray-800">
+                <button
+                  className="mt-6 w-full rounded-md bg-black px-6 py-3 font-semibold text-white hover:bg-gray-800"
+                  onClick={handleCheckout}
+                >
                   Passer la commande
                 </button>
               </div>
@@ -142,4 +165,3 @@ export const Checkout = () => {
     </div>
   );
 };
-

@@ -27,6 +27,74 @@ interface Product {
   category?: ProductCategory;
 }
 
+interface CheckoutItem {
+  productId: string;
+  quantity: number;
+}
+
+interface CreateCheckoutPayload {
+  items: CheckoutItem[];
+  successUrl?: string;
+  cancelUrl?: string;
+}
+
+export const createCheckoutSession = onCall(async (request) => {
+  const { items, successUrl, cancelUrl } = request.data as CreateCheckoutPayload;
+
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    throw new HttpsError('invalid-argument', 'items is required and must be a non-empty array');
+  }
+
+  const success_url = successUrl ?? process.env.CHECKOUT_SUCCESS_URL;
+  const cancel_url = cancelUrl ?? process.env.CHECKOUT_CANCEL_URL;
+
+  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+
+  for (const item of items) {
+    if (!item.productId || !item.quantity || item.quantity <= 0) {
+      throw new HttpsError(
+        'invalid-argument',
+        'Each item must have a valid productId and quantity',
+      );
+    }
+
+    const product = await stripe.products.retrieve(item.productId, {
+      expand: ['default_price'],
+    });
+
+    const defaultPrice = product.default_price as Stripe.Price | null;
+
+    if (!defaultPrice || typeof defaultPrice !== 'object' || !defaultPrice.id) {
+      throw new HttpsError('failed-precondition', `Product ${item.productId} has no default price`);
+    }
+
+    lineItems.push({
+      price: defaultPrice.id,
+      quantity: item.quantity,
+    });
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    mode: 'payment',
+    line_items: lineItems,
+    success_url,
+    cancel_url,
+    billing_address_collection: 'required',
+    shipping_address_collection: {
+      allowed_countries: ['CH', 'FR', 'DE', 'IT'],
+    },
+    automatic_tax: {
+      enabled: false,
+    },
+  });
+
+  if (!session.url) {
+    throw new HttpsError('internal', 'Failed to create checkout session');
+  }
+
+  return { url: session.url };
+});
+
 export const getProducts = onCall(async () => {
   try {
     const stripeProducts = await stripe.products.list({

@@ -18,3 +18,8 @@ export interface Product {
   category?: ProductCategory;
   weekly?: boolean;
 }
+
+export type CheckoutItem = {
+  productId: string;
+  quantity: number;
+};
