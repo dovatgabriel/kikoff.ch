@@ -47,6 +47,8 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_KIKOFF_CH_14E6B }}'
+          export_environment_variables: true
+          create_credentials_file: true
 
       - name: Deploy to Firebase (hosting + functions)
         run: |
