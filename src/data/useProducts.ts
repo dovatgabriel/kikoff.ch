@@ -23,25 +23,52 @@ export const useProducts = (): UseProductsProps => {
 
   useEffect(() => {
     (async () => {
-      const res = await getProducts();
-
-      const products = (res.data as { data: Product[] }).data;
-
-      setProducts(products);
-      setLoading(false);
+      try {
+        const res = await getProducts();
+        const result = res.data as { data: Product[] };
+        setProducts(result.data);
+      } catch (e) {
+        console.error('Error fetching products', e);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 
   const addProduct = async (product: Omit<Product, 'id'>): Promise<void> => {
-    const res = await createProduct(product);
-    const updatedProducts = [...(products ?? []), (res.data as { product: Product }).product];
-    setProducts(updatedProducts);
+    try {
+      const res = await createProduct(product);
+      const raw = res.data;
+
+      const stripeId =
+        raw?.data?.product?.id ??
+        raw?.product?.id ??
+        raw?.productId ??
+        raw?.id ??
+        String(Date.now());
+
+      const newProduct: Product = {
+        ...product,
+        id: stripeId,
+      };
+
+      setProducts((prev) => [...(prev ?? []), newProduct]);
+    } catch (e) {
+      console.error('Error creating product', e);
+      throw e;
+    }
   };
 
   const deleteProduct = async (productId: string): Promise<void> => {
-    await removeProduct({ productId });
-    const updatedProducts = [...(products ?? [])].filter((p) => String(p.id) !== productId);
-    setProducts(updatedProducts);
+    try {
+      await removeProduct({ productId });
+      const updatedProducts = [...(products ?? [])].filter((p) => String(p.id) !== productId);
+      setProducts(updatedProducts);
+    } catch (e) {
+      console.error('Error deleting product', e);
+      throw e;
+    }
   };
 
   const weeklyProducts = useMemo(() => {

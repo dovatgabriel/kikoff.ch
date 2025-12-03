@@ -48,11 +48,12 @@ export const Dashboard = () => {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [sizesInput, setSizesInput] = useState('');
-  const [colorName, setColorName] = useState('');
-  const [colorValue, setColorValue] = useState('');
-  const [image1, setImage1] = useState('');
-  const [image2, setImage2] = useState('');
-  const [image3, setImage3] = useState('');
+
+  const [colorInputs, setColorInputs] = useState<{ name: string; value: string }[]>([
+    { name: '', value: '' },
+  ]);
+  const [imageInputs, setImageInputs] = useState<string[]>(['']);
+
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
 
@@ -93,11 +94,8 @@ export const Dashboard = () => {
     setDescription('');
     setCategory('');
     setSizesInput('');
-    setColorName('');
-    setColorValue('');
-    setImage1('');
-    setImage2('');
-    setImage3('');
+    setColorInputs([{ name: '', value: '' }]);
+    setImageInputs(['']);
     setCreateError(null);
   };
 
@@ -119,17 +117,14 @@ export const Dashboard = () => {
         .map((s) => s.trim())
         .filter(Boolean);
 
-      const colors =
-        colorName && colorValue
-          ? [
-              {
-                name: colorName,
-                value: colorValue,
-              },
-            ]
-          : [];
+      const colors = colorInputs
+        .map((c) => ({
+          name: c.name.trim(),
+          value: c.value.trim(),
+        }))
+        .filter((c) => c.name && c.value);
 
-      const images = [image1, image2, image3].filter(Boolean);
+      const images = imageInputs.map((i) => i.trim()).filter(Boolean);
 
       await addProduct({
         name,
@@ -154,8 +149,35 @@ export const Dashboard = () => {
   };
 
   const handleDeleteProduct = async (productId: string) => {
-    // Tu peux ajouter une confirm si tu veux
-    await deleteProduct(productId);
+    try {
+      await deleteProduct(productId);
+    } catch (e) {
+      console.error('Error deleting product', e);
+    }
+  };
+
+  const handleColorChange = (index: number, field: 'name' | 'value', value: string) => {
+    setColorInputs((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
+
+  const addColorField = () => {
+    setColorInputs((prev) => [...prev, { name: '', value: '' }]);
+  };
+
+  const handleImageChange = (index: number, value: string) => {
+    setImageInputs((prev) => {
+      const updated = [...prev];
+      updated[index] = value;
+      return updated;
+    });
+  };
+
+  const addImageField = () => {
+    setImageInputs((prev) => [...prev, '']);
   };
 
   if (initializing) {
@@ -309,46 +331,58 @@ export const Dashboard = () => {
                   <p className="text-muted-foreground text-[11px]">Séparées par des virgules.</p>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Couleurs</Label>
                   <div className="space-y-2">
-                    <Label htmlFor="colorName">Nom couleur</Label>
-                    <Input
-                      id="colorName"
-                      placeholder="Noir, Beige…"
-                      value={colorName}
-                      onChange={(e) => setColorName(e.target.value)}
-                    />
+                    {colorInputs.map((c, index) => (
+                      <div key={index} className="grid gap-2 md:grid-cols-2">
+                        <Input
+                          placeholder="Nom couleur (Noir, Beige…)"
+                          value={c.name}
+                          onChange={(e) => handleColorChange(index, 'name', e.target.value)}
+                        />
+                        <Input
+                          placeholder="#000000"
+                          value={c.value}
+                          onChange={(e) => handleColorChange(index, 'value', e.target.value)}
+                        />
+                      </div>
+                    ))}
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="colorValue">Code couleur</Label>
-                    <Input
-                      id="colorValue"
-                      placeholder="#000000"
-                      value={colorValue}
-                      onChange={(e) => setColorValue(e.target.value)}
-                    />
-                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-1"
+                    onClick={addColorField}
+                  >
+                    <Plus className="mr-1 h-3 w-3" />
+                    Ajouter une couleur
+                  </Button>
                 </div>
 
                 <div className="space-y-2">
                   <Label>Images (URL)</Label>
                   <div className="space-y-2">
-                    <Input
-                      placeholder="Image 1"
-                      value={image1}
-                      onChange={(e) => setImage1(e.target.value)}
-                    />
-                    <Input
-                      placeholder="Image 2"
-                      value={image2}
-                      onChange={(e) => setImage2(e.target.value)}
-                    />
-                    <Input
-                      placeholder="Image 3"
-                      value={image3}
-                      onChange={(e) => setImage3(e.target.value)}
-                    />
+                    {imageInputs.map((img, index) => (
+                      <Input
+                        key={index}
+                        placeholder={`Image ${index + 1}`}
+                        value={img}
+                        onChange={(e) => handleImageChange(index, e.target.value)}
+                      />
+                    ))}
                   </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-1"
+                    onClick={addImageField}
+                  >
+                    <Plus className="mr-1 h-3 w-3" />
+                    Ajouter une image
+                  </Button>
                 </div>
 
                 <DialogFooter className="pt-2">
@@ -417,7 +451,11 @@ export const Dashboard = () => {
                             )}
                           </div>
                         </TableCell>
-                        <TableCell>{product.price.toFixed(2)} CHF</TableCell>
+                        <TableCell>
+                          {typeof product.price === 'number'
+                            ? `${product.price.toFixed(2)} CHF`
+                            : '—'}
+                        </TableCell>
                         <TableCell>
                           {product.category ? (
                             <Badge variant="outline">{product.category}</Badge>
