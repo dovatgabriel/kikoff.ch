@@ -15,7 +15,9 @@ export const Favorites = () => {
           {favorites.length === 0 ? (
             <div className="py-12 text-center">
               <p className="mb-4 text-gray-600">Vous n'avez pas encore de favoris</p>
-              <p className="text-sm text-gray-500">Ajoutez des produits à vos favoris en cliquant sur l'icône cœur</p>
+              <p className="text-sm text-gray-500">
+                Ajoutez des produits à vos favoris en cliquant sur l'icône cœur
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -36,4 +38,3 @@ export const Favorites = () => {
     </div>
   );
 };
-

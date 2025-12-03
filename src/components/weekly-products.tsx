@@ -1,9 +1,9 @@
 import { ProductCard } from '@/components/products/product-card';
 import { NavigationButtons } from '@/components/common/navigation-buttons';
-import type { BaseProduct } from '@/types/product';
+import type { Product } from '@/types/product';
 
 interface WeeklyProductsProps {
-  products: BaseProduct[];
+  products: Product[];
 }
 
 export const WeeklyProducts = ({ products }: WeeklyProductsProps) => {
@@ -18,14 +18,14 @@ export const WeeklyProducts = ({ products }: WeeklyProductsProps) => {
           <NavigationButtons />
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 md:gap-6">
           {products.map((product) => (
             <ProductCard
               key={product.id}
               id={product.id}
               name={product.name}
               price={product.price}
-              image={product.image}
+              image={product.images[0]}
             />
           ))}
         </div>

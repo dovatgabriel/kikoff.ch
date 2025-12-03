@@ -6,7 +6,8 @@ import { SizeFilter } from '@/components/filters/size-filter';
 import { AvailabilityFilter } from '@/components/filters/availability-filter';
 import { CollapsibleFilter } from '@/components/filters/collapsible-filter';
 import { ProductCard } from '@/components/products/product-card';
-import { products } from '@/data/products';
+import { useProducts } from '@/data/useProducts';
+import type { ProductSize } from '@/types/product';
 
 const ALL_SIZES = ['XS', 'S', 'M', 'L', 'XL', '2X'];
 const QUICK_CATEGORIES = [
@@ -31,26 +32,26 @@ export const Products = () => {
   const [selectedQuickCategory, setSelectedQuickCategory] = useState<string | null>(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
+  const { products } = useProducts();
+
   const filteredProducts = useMemo(() => {
     let filtered = products;
 
     // Filter by search query
     if (searchQuery) {
-      filtered = filtered.filter((p) =>
-        p.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      filtered = filtered?.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
     }
 
     // Filter by sizes
     if (selectedSizes.length > 0) {
-      filtered = filtered.filter((p) =>
-        selectedSizes.some((size) => p.sizes.includes(size))
+      filtered = filtered?.filter((p) =>
+        selectedSizes.some((size) => p.sizes.includes(size as ProductSize)),
       );
     }
 
     // Filter by category
     if (selectedCategory) {
-      filtered = filtered.filter((p) => p.category === selectedCategory);
+      filtered = filtered?.filter((p) => p.category === selectedCategory);
     }
 
     // Filter by quick category (for now, just reset category filter)
@@ -65,14 +66,14 @@ export const Products = () => {
     }
 
     return filtered;
-  }, [selectedSizes, inStock, outOfStock, searchQuery, selectedCategory]);
+  }, [selectedSizes, inStock, outOfStock, searchQuery, selectedCategory, products]);
 
-  const inStockCount = products.length; // Mock count
+  const inStockCount = products?.length; // Mock count
   const outOfStockCount = 0; // Mock count
 
   const handleSizeToggle = (size: string) => {
     setSelectedSizes((prev) =>
-      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
+      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size],
     );
   };
 
@@ -116,7 +117,7 @@ export const Products = () => {
                 <AvailabilityFilter
                   inStock={inStock}
                   outOfStock={outOfStock}
-                  inStockCount={inStockCount}
+                  inStockCount={inStockCount ?? 0}
                   outOfStockCount={outOfStockCount}
                   onInStockToggle={() => setInStock(!inStock)}
                   onOutOfStockToggle={() => setOutOfStock(!outOfStock)}
@@ -147,10 +148,10 @@ export const Products = () => {
                 <CollapsibleFilter title="Couleurs">
                   <div className="flex flex-wrap gap-2">
                     {Array.from(
-                      new Set(products.flatMap((p) => p.colors.map((c) => c.value)))
+                      new Set(products?.flatMap((p) => p.colors.map((c) => c.value))),
                     ).map((colorValue) => {
                       const color = products
-                        .flatMap((p) => p.colors)
+                        ?.flatMap((p) => p.colors)
                         .find((c) => c.value === colorValue);
                       return (
                         <button
@@ -213,13 +214,13 @@ export const Products = () => {
               {/* Search Bar */}
               <div className="mb-6">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+                  <Search className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Rechercher"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full rounded-lg border border-gray-300 bg-white py-3 pl-10 pr-4 focus:border-black focus:outline-none"
+                    className="w-full rounded-lg border border-gray-300 bg-white py-3 pr-4 pl-10 focus:border-black focus:outline-none"
                   />
                 </div>
               </div>
@@ -230,7 +231,9 @@ export const Products = () => {
                   <button
                     key={category}
                     onClick={() => {
-                      setSelectedQuickCategory(selectedQuickCategory === category ? null : category);
+                      setSelectedQuickCategory(
+                        selectedQuickCategory === category ? null : category,
+                      );
                       setSelectedCategory(null); // Reset category filter when using quick category
                     }}
                     className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
@@ -246,7 +249,7 @@ export const Products = () => {
 
               {/* Products Grid */}
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredProducts.map((product) => (
+                {filteredProducts?.map((product) => (
                   <ProductCard
                     key={product.id}
                     id={product.id}
@@ -257,7 +260,7 @@ export const Products = () => {
                 ))}
               </div>
 
-              {filteredProducts.length === 0 && (
+              {filteredProducts?.length === 0 && (
                 <div className="py-12 text-center">
                   <p className="text-gray-500">Aucun produit trouvé</p>
                 </div>
@@ -269,4 +272,3 @@ export const Products = () => {
     </div>
   );
 };
-

@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { ProductCard } from '@/components/products/product-card';
 import { NavigationButtons } from '@/components/common/navigation-buttons';
-import type { ProductWithCategory } from '@/types/product';
+import { ProductCard } from '@/components/products/product-card';
+import type { Product } from '@/data/products';
+import { useState } from 'react';
 
 interface CollectionsSectionProps {
-  products: ProductWithCategory[];
+  products: Product[];
 }
 
 const FILTERS = [
@@ -32,7 +32,9 @@ export const CollectionsSection = ({ products }: CollectionsSectionProps) => {
                 key={filter.value}
                 onClick={() => setActiveFilter(filter.value)}
                 className={`rounded-full px-3 py-1.5 text-xs transition-colors sm:px-4 sm:py-2 sm:text-sm ${
-                  activeFilter === filter.value ? 'bg-black text-white' : 'bg-white hover:bg-gray-100'
+                  activeFilter === filter.value
+                    ? 'bg-black text-white'
+                    : 'bg-white hover:bg-gray-100'
                 }`}
               >
                 {filter.label}
@@ -48,7 +50,7 @@ export const CollectionsSection = ({ products }: CollectionsSectionProps) => {
               id={product.id}
               name={product.name}
               price={product.price}
-              image={product.image}
+              image={product.images[0]}
               aspectRatio="portrait"
             />
           ))}
