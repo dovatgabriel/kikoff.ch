@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth/web-extension';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
 const firebaseConfig = {
@@ -13,6 +14,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const functions = getFunctions(app);
+export const auth = getAuth(app);
 
 if (window.location.host === 'localhost:5173') {
   console.log('connecting emulators');

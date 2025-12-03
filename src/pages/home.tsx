@@ -1,5 +1,4 @@
 import { ApproachSection } from '@/components/approach-section';
-import { BrandSection } from '@/components/brand-section';
 import { CollectionsSection } from '@/components/collection-section';
 import { Header } from '@/components/header';
 import { HeroSection } from '@/components/hero-section';
@@ -28,7 +27,6 @@ export const Home = () => {
         {/*<WeeklyProducts products={weeklyProducts || []} />*/}
         <CollectionsSection products={collectionProducts || []} />
         <ApproachSection images={approachImages} />
-        <BrandSection />
       </div>
     </div>
   );
