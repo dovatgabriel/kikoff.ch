@@ -39,7 +39,8 @@ export const useProducts = (): UseProductsProps => {
   const addProduct = async (product: Omit<Product, 'id'>): Promise<void> => {
     try {
       const res = await createProduct(product);
-      const raw = res.data;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const raw = res.data as any;
 
       const stripeId =
         raw?.data?.product?.id ??
