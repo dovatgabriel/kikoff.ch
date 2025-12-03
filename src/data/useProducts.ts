@@ -39,7 +39,7 @@ export const useProducts = (): UseProductsProps => {
   };
 
   const deleteProduct = async (productId: string): Promise<void> => {
-    await removeProduct(productId);
+    await removeProduct({ productId });
     const updatedProducts = [...(products ?? [])].filter((p) => String(p.id) !== productId);
     setProducts(updatedProducts);
   };

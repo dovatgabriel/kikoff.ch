@@ -200,3 +200,24 @@ export const addProduct = onCall(async (request) => {
     throw new HttpsError('internal', 'Failed to create product', error?.message);
   }
 });
+
+export const deleteProduct = onCall(async (request) => {
+  const { productId } = request.data as { productId: string };
+
+  if (!productId || typeof productId !== 'string') {
+    throw new HttpsError('invalid-argument', 'productId is required');
+  }
+
+  try {
+    const updatedProduct = await stripe.products.update(productId, {
+      active: false,
+    });
+
+    return {
+      success: true,
+      product: updatedProduct,
+    };
+  } catch (e: any) {
+    throw new HttpsError('internal', 'Failed to delete product', e?.message);
+  }
+});
