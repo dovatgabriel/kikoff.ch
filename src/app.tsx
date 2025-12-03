@@ -6,6 +6,7 @@ import { Checkout } from '@/pages/checkout';
 import { Favorites } from '@/pages/favorites';
 import { BrandSection } from './components/brand-section';
 import { Dashboard } from './pages/dashboard';
+import { ThankYouPage } from './pages/thank-you';
 
 export const App = () => {
   return (
@@ -17,6 +18,7 @@ export const App = () => {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/thank-you" element={<ThankYouPage />} />
       </Routes>
       <BrandSection />
     </>
