@@ -4,24 +4,40 @@ import { Header } from '@/components/header';
 import { ImageFallback } from '@/components/figma/image-fallback';
 import { QuantityControl } from '@/components/common/quantity-control';
 import { useCart } from '@/contexts/cart-context';
-import { httpsCallable } from 'firebase/functions';
-import { functions } from '@/firebase.config';
 import type { CheckoutItem } from '@/types/product';
 
-const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
+const FUNCTIONS_BASE_URL = 'https://us-central1-kikoff-ch-14e6b.cloudfunctions.net';
 
 export const Checkout = () => {
   const { items, removeFromCart, updateQuantity, getTotal } = useCart();
 
   const handleCheckout = async () => {
-    const checkoutItems: CheckoutItem[] = items.map((item) => ({
-      productId: item.productId as unknown as string,
-      quantity: item.quantity,
-    }));
+    try {
+      const checkoutItems: CheckoutItem[] = items.map((item) => ({
+        productId: String(item.productId),
+        quantity: item.quantity,
+      }));
 
-    const result = await createCheckoutSession({ items: checkoutItems });
+      const res = await fetch(`${FUNCTIONS_BASE_URL}/createCheckoutSession`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items: checkoutItems,
+        }),
+      });
 
-    window.location.href = (result.data as { url: string }).url;
+      if (!res.ok) {
+        console.error('Error creating checkout session', await res.text());
+        return;
+      }
+
+      const data = (await res.json()) as { url: string };
+      window.location.href = data.url;
+    } catch (e) {
+      console.error('Error during checkout', e);
+    }
   };
 
   if (items.length === 0) {

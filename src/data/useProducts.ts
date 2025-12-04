@@ -1,31 +1,35 @@
-import { functions } from '@/firebase.config';
 import type { Product } from '@/types/product';
-import { httpsCallable } from 'firebase/functions';
 import { useEffect, useMemo, useState } from 'react';
 
 interface UseProductsProps {
   products?: Product[];
   weeklyProducts?: Product[];
   collectionProducts?: Product[];
-  approachImages?: string[];
   loading: boolean;
   addProduct: (product: Omit<Product, 'id'>) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
 }
 
-const getProducts = httpsCallable(functions, 'getProducts');
-const createProduct = httpsCallable(functions, 'addProduct');
-const removeProduct = httpsCallable(functions, 'deleteProduct');
+const BASE_URL = 'https://us-central1-kikoff-ch-14e6b.cloudfunctions.net';
 
 export const useProducts = (): UseProductsProps => {
   const [loading, setLoading] = useState<boolean>(true);
   const [products, setProducts] = useState<Product[]>();
 
+  //
+  // GET PRODUCTS
+  //
   useEffect(() => {
     (async () => {
       try {
-        const res = await getProducts();
-        const result = res.data as { data: Product[] };
+        const res = await fetch(`${BASE_URL}/getProducts`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+
+        const result = (await res.json()) as { data: Product[] };
         setProducts(result.data);
       } catch (e) {
         console.error('Error fetching products', e);
@@ -36,18 +40,22 @@ export const useProducts = (): UseProductsProps => {
     })();
   }, []);
 
+  //
+  // ADD PRODUCT
+  //
   const addProduct = async (product: Omit<Product, 'id'>): Promise<void> => {
     try {
-      const res = await createProduct(product);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const raw = res.data as any;
+      const res = await fetch(`${BASE_URL}/addProduct`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product),
+      });
 
-      const stripeId =
-        raw?.data?.product?.id ??
-        raw?.product?.id ??
-        raw?.productId ??
-        raw?.id ??
-        String(Date.now());
+      if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+
+      const raw = await res.json();
+
+      const stripeId = raw?.product?.id ?? raw?.data?.product?.id ?? raw?.id ?? String(Date.now());
 
       const newProduct: Product = {
         ...product,
@@ -61,11 +69,20 @@ export const useProducts = (): UseProductsProps => {
     }
   };
 
+  //
+  // DELETE PRODUCT
+  //
   const deleteProduct = async (productId: string): Promise<void> => {
     try {
-      await removeProduct({ productId });
-      const updatedProducts = [...(products ?? [])].filter((p) => String(p.id) !== productId);
-      setProducts(updatedProducts);
+      const res = await fetch(`${BASE_URL}/deleteProduct`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId }),
+      });
+
+      if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+
+      setProducts((prev) => (prev ?? []).filter((p) => String(p.id) !== productId));
     } catch (e) {
       console.error('Error deleting product', e);
       throw e;
