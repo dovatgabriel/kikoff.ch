@@ -13,7 +13,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-export const functions = getFunctions(app);
+export const functions = getFunctions(app, 'us-central1');
 export const auth = getAuth(app);
 
 if (window.location.host === 'localhost:5173') {
